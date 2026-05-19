@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>FireHub EG | منصة الهندسة المتكاملة لمكافحة الحريق</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+  /* ========== المتغيرات الأساسية ========== */
+  :root {
+    --primary: #0f5b9c;
+    --primary-dark: #083c68;
+    --primary-glow: rgba(15, 91, 156, 0.35);
+    --secondary: #2dd4bf;
+    --accent-gold: #fbbf24;
+    --dark-bg: #07090e;
+    --dark-card: #0f1219;
+    --dark-elevated: #181d2b;
+    --white: #ffffff;
+    --gray-light: #eef2ff;
+    --gray-mid: #9ca3af;
+    --transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+  body {
+    background: var(--dark-bg);
+    color: var(--gray-light);
+    font-family: 'Cairo', sans-serif;
+    overflow-x: hidden;
+    line-height: 1.6;
+    width: 100%;
+    position: relative;
+  }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--dark-card); }
+  ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+  /* ========== NAVBAR متطور ========== */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 18px 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(7, 9, 14, 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+    transition: var(--transition);
+  }
+  nav.scrolled {
+    padding: 12px 5%;
+    background: rgba(7, 9, 14, 0.98);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    border-bottom-color: rgba(251, 191, 36, 0.3);
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .nav-logo svg {
+    width: 38px;
+    height: 38px;
+    filter: drop-shadow(0 0 8px var(--primary-glow));
+  }
+  .nav-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: clamp(18px, 5vw, 22px);
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+  }
+  .nav-brand .fire { color: var(--white); }
+  .nav-brand .hub { color: var(--accent-gold); }
+  .nav-brand .eg { color: var(--accent-gold); font-size: 0.7em; margin-right: 3px; }
+  .nav-links {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .nav-links a {
+    color: var(--gray-mid);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 40px;
+    transition: var(--transition);
+    position: relative;
+    white-space: nowrap;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--accent-gold);
+    transition: 0.25s ease;
+    transform: translateX(50%);
+  }
+  .nav-links a:hover::after, .nav-links a.active::after { width: 70%; }
+  .nav-links a:hover { color: var(--white); background: rgba(45, 212, 191, 0.08); }
+  .nav-links a.active { color: var(--white); background: rgba(15, 91, 156, 0.2); }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+    color: var(--white) !important;
+    padding: 8px 20px !important;
+    border-radius: 40px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 12px rgba(15, 91, 156, 0.4);
+  }
+  .nav-cta:hover {
+    background: linear-gradient(135deg, var(--primary-dark), #052a48) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(15, 91, 156, 0.5);
+  }
+  .nav-cta::after { display: none; }
+
+  /* هامبورجر */
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 26px; height: 2px; background: var(--white); border-radius: 2px; transition: 0.2s; }
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: rgba(7, 9, 14, 0.98);
+    backdrop-filter: blur(12px);
+    padding: 20px;
+    flex-direction: column;
+    gap: 8px;
+    border-bottom: 1px solid rgba(251, 191, 36, 0.2);
+    z-index: 999;
+  }
+  .mobile-menu a {
+    color: var(--gray-mid);
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: 0.2s;
+  }
+  .mobile-menu a:hover { background: rgba(45, 212, 191, 0.1); color: white; }
+  .mobile-cta { background: var(--primary); color: white !important; text-align: center; }
+
+  /* أنيميشن ظهور */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ========== هيرو - تحسين كامل للتجاوب ========== */
+  .hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(110deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.3) 100%),
+                url('https://images.pexels.com/photos/13466261/pexels-photo-13466261.jpeg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    background-attachment: scroll;
+    background-color: #07090e;
+  }
+  .hero .container {
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 5%;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-content {
+    max-width: 650px;
+    text-align: left;
+    margin-right: auto;
+    margin-left: 0;
+  }
+  .hero-title {
+    font-size: clamp(32px, 6vw, 58px);
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ffffff, var(--secondary), var(--accent-gold));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  .hero-sub {
+    font-size: clamp(15px, 3vw, 18px);
+    color: var(--gray-light);
+    margin-bottom: 32px;
+    line-height: 1.7;
+    max-width: 520px;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 45px;
+    justify-content: flex-start;
+    transform: translateX(0);
+  }
+  /* أزرار محسنة */
+  .btn-primary, .btn-secondary {
+    padding: 10px 24px;
+    border-radius: 60px;
+    font-weight: 700;
+    font-size: clamp(13px, 3vw, 15px);
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    border: none;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: linear-gradient(95deg, var(--primary), #1a74b3);
+    color: white;
+    box-shadow: 0 6px 18px rgba(15, 91, 156, 0.4);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(95deg, var(--primary-dark), #0a4a7a);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 26px rgba(15, 91, 156, 0.6);
+  }
+  .btn-secondary {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(8px);
+    color: var(--gray-light);
+    border: 1px solid rgba(251, 191, 36, 0.5);
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent-gold);
+    background: rgba(45, 212, 191, 0.12);
+    transform: translateY(-2px);
+    color: white;
+  }
+
+  /* ========== الأقسام العامة ========== */
+  .section {
+    padding: 80px 5%;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  .section-label {
+    color: var(--accent-gold);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::before {
+    content: '';
+    width: 32px;
+    height: 2px;
+    background: var(--accent-gold);
+    border-radius: 2px;
+  }
+  .section-title {
+    font-size: clamp(26px, 5vw, 44px);
+    font-weight: 900;
+    margin-bottom: 20px;
+    line-height: 1.2;
+    color: var(--white);
+  }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px;
+    margin-top: 50px;
+  }
+  .card {
+    background: var(--dark-card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 28px;
+    padding: 28px 24px;
+    transition: var(--transition);
+  }
+  .card:hover {
+    border-color: var(--accent-gold);
+    transform: translateY(-8px);
+    box-shadow: 0 25px 40px -12px rgba(0,0,0,0.6);
+  }
+  .card-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(45, 212, 191, 0.1);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 24px;
+    transition: var(--transition);
+    color: var(--secondary);
+  }
+  .card:hover .card-icon { background: var(--primary); color: white; transform: scale(1.05); }
+  .card-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: var(--white);
+  }
+  .card-desc {
+    color: var(--gray-mid);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .services-wrap {
+    background: var(--dark-card);
+    border-top: 1px solid rgba(251, 191, 36, 0.15);
+    border-bottom: 1px solid rgba(251, 191, 36, 0.15);
+    padding: 80px 5%;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 60px;
+  }
+  .service-item {
+    background: var(--dark-elevated);
+    border-radius: 24px;
+    padding: 26px;
+    display: flex;
+    gap: 20px;
+    transition: 0.25s;
+    align-items: flex-start;
+  }
+  .service-item:hover {
+    background: rgba(45, 212, 191, 0.06);
+    transform: translateX(8px);
+  }
+  .service-num {
+    font-family: 'Montserrat';
+    font-weight: 900;
+    font-size: 20px;
+    color: var(--accent-gold);
+    opacity: 0.8;
+  }
+  .service-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--white);
+  }
+  .service-desc {
+    font-size: 14px;
+    color: var(--gray-mid);
+  }
+  .consulting-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px;
+    margin-top: 60px;
+  }
+  .consult-card {
+    border-radius: 28px;
+    padding: 32px 24px;
+    transition: var(--transition);
+  }
+  .consult-card.basic { background: var(--dark-card); border: 1px solid rgba(255,255,255,0.05); }
+  .consult-card.pro {
+    background: linear-gradient(145deg, #0a1428, #0c1a32);
+    border: 1px solid var(--accent-gold);
+    box-shadow: 0 0 40px rgba(251, 191, 36, 0.15);
+  }
+  .consult-card.enterprise { background: var(--dark-card); border: 1px solid rgba(255,255,255,0.05); }
+  .consult-card:hover { transform: translateY(-8px); }
+  .pkg-popular {
+    background: var(--accent-gold);
+    color: #0a0c10;
+    font-size: 11px;
+    padding: 5px 14px;
+    border-radius: 40px;
+    display: inline-block;
+    margin-bottom: 18px;
+    font-weight: 800;
+  }
+  .consult-type {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-gold);
+    font-weight: 600;
+  }
+  .consult-name {
+    font-size: 24px;
+    font-weight: 800;
+    margin: 12px 0 8px;
+  }
+  .consult-price {
+    font-family: 'Montserrat';
+    font-weight: 900;
+    font-size: 40px;
+    line-height: 1;
+    margin: 15px 0 5px;
+  }
+  .consult-price.free { color: var(--secondary); }
+  .consult-price-note {
+    font-size: 13px;
+    color: var(--gray-mid);
+  }
+  .consult-features { list-style: none; margin-top: 20px; }
+  .consult-features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+  .consult-features li::before { content: '✓'; color: var(--accent-gold); font-weight: bold; }
+  .consult-btn {
+    width: 100%;
+    margin-top: 30px;
+    padding: 14px;
+    border-radius: 40px;
+    font-weight: 700;
+    text-align: center;
+    display: block;
+    transition: var(--transition);
+    cursor: pointer;
+    border: none;
+    background: rgba(255,255,255,0.05);
+    color: var(--gray-light);
+    text-decoration: none;
+  }
+  .consult-card.pro .consult-btn { background: var(--primary); color: white; }
+  .consult-btn:hover {
+    background: var(--primary-dark);
+    color: white;
+    transform: translateY(-2px);
+  }
+  .cta-section {
+    padding: 80px 5%;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 50%, rgba(45, 212, 191, 0.08), transparent);
+  }
+  /* ========== فوتر متجاوب بالكامل ========== */
+  footer {
+    background: #0a0c14;
+    padding: 60px 5% 30px;
+    border-top: 1px solid rgba(251, 191, 36, 0.2);
+  }
+  .footer-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 40px;
+  }
+  .footer-col {
+    flex: 1;
+    min-width: 180px;
+  }
+  .footer-col .logo-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(24px, 5vw, 28px);
+    font-weight: 900;
+    margin-bottom: 16px;
+  }
+  .footer-col .logo-text .fire { color: white; }
+  .footer-col .logo-text .hub { color: var(--accent-gold); }
+  .footer-desc {
+    color: var(--gray-mid);
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 16px 0 20px;
+  }
+  .social-links {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 50%;
+    color: var(--gray-light);
+    font-size: 18px;
+    transition: var(--transition);
+    text-decoration: none;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+  }
+  .social-links a:hover {
+    background: var(--accent-gold);
+    color: #0a0c10;
+    transform: translateY(-3px);
+    border-color: var(--accent-gold);
+  }
+  .footer-col h4 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--white);
+    position: relative;
+    display: inline-block;
+  }
+  .footer-col h4::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    right: 0;
+    width: 35px;
+    height: 2px;
+    background: var(--accent-gold);
+    border-radius: 2px;
+  }
+  .footer-col ul {
+    list-style: none;
+  }
+  .footer-col ul li {
+    margin-bottom: 12px;
+  }
+  .footer-col ul li a {
+    color: var(--gray-mid);
+    text-decoration: none;
+    transition: 0.2s;
+    font-size: 14px;
+  }
+  .footer-col ul li a:hover {
+    color: var(--accent-gold);
+    padding-right: 5px;
+  }
+  .newsletter-form {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .newsletter-form input {
+    flex: 1;
+    min-width: 120px;
+    background: var(--dark-elevated);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 40px;
+    padding: 10px 16px;
+    color: white;
+    font-family: 'Cairo', sans-serif;
+    outline: none;
+    transition: 0.2s;
+  }
+  .newsletter-form input:focus { border-color: var(--accent-gold); }
+  .newsletter-form button {
+    background: var(--primary);
+    border: none;
+    border-radius: 40px;
+    padding: 0 20px;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    white-space: nowrap;
+  }
+  .newsletter-form button:hover {
+    background: var(--accent-gold);
+    color: #0a0c10;
+    transform: scale(1.02);
+  }
+  .footer-bottom {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 25px;
+    border-top: 1px solid rgba(251, 191, 36, 0.15);
+    font-size: 13px;
+    color: var(--gray-mid);
+  }
+
+  /* ========== تحسينات متقدمة لمختلف الشاشات ========== */
+  @media (max-width: 1024px) {
+    .nav-links a { padding: 8px 10px; font-size: 13px; }
+    .hero-content { max-width: 550px; }
+    .section { padding: 70px 5%; }
+    .services-wrap { padding: 70px 5%; }
+    .footer-container { gap: 30px; }
+  }
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    nav { padding: 14px 5%; }
+    .hero .container { padding: 0 5%; }
+    .hero-content { text-align: center; margin: 0 auto; max-width: 100%; }
+    .hero-actions { justify-content: center; transform: translateX(0); }
+    .hero-sub { margin-left: auto; margin-right: auto; }
+    .hero-stats { justify-content: center; }
+    .section-title { text-align: center; }
+    .section-label { justify-content: center; }
+    .section-label::before { display: none; }
+    .cards-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .services-grid { grid-template-columns: 1fr; }
+    .consulting-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .service-item { flex-direction: column; text-align: center; align-items: center; }
+    .service-num { margin-bottom: 8px; }
+    .service-item:hover { transform: translateY(-5px) translateX(0); }
+    .footer-container { flex-direction: column; text-align: center; align-items: center; }
+    .social-links { justify-content: center; }
+    .footer-col h4::after { right: 50%; transform: translateX(50%); width: 50px; }
+    .newsletter-form { justify-content: center; }
+    .footer-desc { text-align: center; }
+  }
+  @media (max-width: 680px) {
+    .hero-actions { flex-direction: column; align-items: center; width: 100%; }
+    .btn-primary, .btn-secondary { width: 100%; justify-content: center; white-space: normal; text-align: center; }
+    .hero-stats { flex-direction: column; gap: 20px; align-items: center; }
+    .stat { text-align: center; }
+    .card { padding: 24px 20px; }
+    .consult-card { padding: 28px 20px; }
+    .consult-price { font-size: 36px; }
+    .cta-section .hero-actions { flex-direction: column; width: 100%; gap: 12px; }
+    .cta-section .btn-primary, .cta-section .btn-secondary { width: 90%; max-width: 280px; margin: 0 auto; }
+  }
+  @media (max-width: 480px) {
+    nav { padding: 12px 4%; }
+    .nav-logo svg { width: 30px; height: 30px; }
+    .nav-brand { font-size: 16px; }
+    .hero-title { font-size: 28px; }
+    .hero-sub { font-size: 14px; }
+    .btn-primary, .btn-secondary { padding: 10px 20px; font-size: 13px; }
+    .section { padding: 50px 4%; }
+    .services-wrap { padding: 50px 4%; }
+    .cta-section { padding: 50px 4%; }
+    .card-title { font-size: 18px; }
+    .card-desc { font-size: 14px; }
+    .service-title { font-size: 18px; }
+    .consult-name { font-size: 20px; }
+    .consult-price { font-size: 32px; }
+    .footer-col .logo-text { font-size: 24px; }
+    .newsletter-form input { padding: 8px 14px; }
+    .newsletter-form button { padding: 0 16px; font-size: 12px; }
+    .footer-bottom { font-size: 11px; }
+  }
+  /* إصلاح أي تجاوز عرضي */
+  img, svg, iframe, .card, .service-item, .consult-card {
+    max-width: 100%;
+  }
+  .container, .services-inner, .cta-inner {
+    width: 100%;
+    overflow-x: hidden;
+  }
+  /* تحسين ظهور النص على الهيرو في الشاشات الصغيرة */
+  @media (max-width: 768px) {
+    .hero {
+      background-position: 30% center;
+    }
+  }
+  /* إضافة دعم للشاشات الكبيرة */
+  @media (min-width: 1600px) {
+    .hero .container, .section, .services-wrap .services-inner, .footer-container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  /* تحسين التفاعل باللمس */
+  @media (hover: none) and (pointer: coarse) {
+    .btn-primary, .btn-secondary, .consult-btn, .nav-links a, .card, .service-item {
+      cursor: pointer;
+    }
+    .card:hover { transform: none; }
+    .service-item:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a class="nav-logo" href="Home.html">
+    <svg viewBox="0 0 64 64" fill="none" width="38" height="38">
+      <path d="M32 4 L58 18 L58 46 L32 60 L6 46 L6 18 Z" fill="#0a0c10" stroke="#fbbf24" stroke-width="1.8"/>
+      <path d="M32 48C24 44 20 38 22 30C23 26 26 24 26 24C26 28 28 30 30 30C28 26 29 20 32 16C35 20 35 24 34 28C36 26 38 22 37 18C42 22 44 30 40 38C38 42 35 46 32 48Z" fill="url(#gradLogo)"/>
+      <defs><linearGradient id="gradLogo" x1="32" y1="48" x2="32" y2="16" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#0f5b9c"/><stop offset="100%" stop-color="#2dd4bf"/></linearGradient></defs>
+    </svg>
+    <div class="nav-brand"><span class="eg">EG&nbsp;</span><span class="fire">Fire</span><span class="hub">Hub</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">الرئيسية</a></li>
+    <li><a href="Suppliers.html">الموردون</a></li>
+    <li><a href="Consulting.html">الاستشارات</a></li>
+    <li><a href="Articles.html"> المقالات </a></li>
+    <li><a href="Whoarewe.html">من نحن</a></li>
+    <li><a href="Contact.html" class="nav-cta">تواصل معنا</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">الرئيسية</a>
+    <a href="Suppliers.html">الموردون</a>
+    <a href="Contact.html">الاستشارات</a>
+    <a href="Articles.html">المقالات </a>
+    <a href="Whoarewe.html">من نحن</a>
+    <a href="Contact.html" class="mobile-cta">تواصل معنا</a>
+  </div>
+</nav>
+
+<!-- ========== هيرو ========== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content fade-up">
+      <h1 class="hero-title">منصة هندسية <span class="accent">متكاملة<br>لمكافحة الحريق</span></h1>
+      <p class="hero-sub">استشارات دقيقة وفق الكود المصري، دليل موثوق لأفضل الموردين والمقاولين، وحلول فنية متكاملة.</p>
+      <div class="hero-actions">
+        <a href="Consulting.html" class="btn-primary">احصل على استشارة →</a>
+        <a href="Suppliers.html" class="btn-secondary">استكشف الموردين</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== من نستهدف ========== -->
+<section class="section fade-up">
+  <div class="section-label">لمن هذه المنصة</div>
+  <h2 class="section-title">لمكاتب الهندسة، المقاولين، وأصحاب المنشآت</h2>
+  <p style="font-size: clamp(15px, 3vw, 17px); color: var(--gray-mid); max-width: 800px;">حلقة وصل متكاملة: تصميم، مراجعة، ترشيح موردين، ومتابعة تنفيذية وفق أعلى المعايير.</p>
+  <div class="cards-grid">
+    <div class="card"><div class="card-icon">📋</div><div class="card-title">مراجعة تقارير الحريق</div><div class="card-desc">نراجع تقارير السلامة ونقدم توصيات لاعتمادها من الجهات المختصة.</div></div>
+    <div class="card"><div class="card-icon">📐</div><div class="card-title">تصميم وإعداد مستندات</div><div class="card-desc">إعداد تقارير ورسومات لأنظمة الإطفاء والإنذار متوافقة مع الكود المصري.</div></div>
+    <div class="card"><div class="card-icon">💬</div><div class="card-title">استشارات فنية سريعة</div><div class="card-desc">خبراء يجيبون على استفساراتك خلال 24 ساعة.</div></div>
+  </div>
+  <div style="background: linear-gradient(135deg, #0a1420, #0f1a2a); border-radius: 28px; padding: clamp(20px, 5vw, 32px); margin-top: 40px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; justify-content: center;">
+    <div style="font-size: 42px;">🏭</div>
+    <div style="flex:1; min-width: 180px;"><div style="font-weight: 800; font-size: clamp(18px, 4vw, 20px);">اختر المقاول أو المورد الأنسب</div><div style="color: var(--gray-mid);">بعد الاستشارة، يمكنك الاختيار من قائمة الموردين والمقاولين المعتمدين لدينا.</div></div>
+    <a href="Suppliers.html" style="background: var(--primary); padding: 12px 24px; border-radius: 40px; text-decoration: none; color: white; font-weight: 700; white-space: nowrap;">تصفح القائمة →</a>
+  </div>
+</section>
+
+<!-- ========== خدماتنا ========== -->
+<div class="services-wrap fade-up">
+  <div class="services-inner" style="max-width: 1300px; margin: auto;">
+    <div class="section-label">خدماتنا المتكاملة</div>
+    <h2 class="section-title">كل ما تحتاجه في مكان واحد</h2>
+    <div class="services-grid">
+      <div class="service-item"><div class="service-num">01</div><div><div class="service-title">سوق الموردين والمقاولين</div><div class="service-desc">دليل لأفضل موردي طلمبات، مواسير، إنذار، إطفاء.</div></div></div>
+      <div class="service-item"><div class="service-num">02</div><div><div class="service-title">استشارات هندسية متخصصة</div><div class="service-desc">من سؤال بسيط إلى مراجعة تصميم كامل وفق NFPA والكود المصري.</div></div></div>
+      <div class="service-item"><div class="service-num">03</div><div><div class="service-title">مراجعة التصاميم والعروض</div><div class="service-desc">تقييم مستندات المشروع وتقارير فنية معتمدة.</div></div></div>
+      <div class="service-item"><div class="service-num">04</div><div><div class="service-title">مكتبة فنية ومراجع</div><div class="service-desc">مقالات، مقارنات، شروحات للكود المصري، وأدوات حاسبات.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== باقات الاستشارات ========== -->
+<section class="section fade-up">
+  <div class="section-label">اختر الباقة المناسبة</div>
+  <h2 class="section-title">استشارات تناسب جميع الاحتياجات</h2>
+  <div class="consulting-grid">
+    <div class="consult-card basic"><div class="consult-type">أساسي</div><div class="consult-name">استشارة سريعة</div><div class="consult-price free">مجاني</div><div class="consult-price-note">للاستفسارات المحددة</div><ul class="consult-features"><li>سؤال هندسي واحد</li><li>رد خلال 24 ساعة</li><li>وفق الكود المصري</li></ul><a href="Consulting.html" class="consult-btn">ابدأ مجاناً</a></div>
+    <div class="consult-card pro"><div class="pkg-popular">⭐ الأكثر طلباً</div><div class="consult-type">احترافي</div><div class="consult-name">مراجعة التقرير الفني</div><div class="consult-price">1,000 ج.م</div><div class="consult-price-note">ثابت للمشروع</div><ul class="consult-features"><li>مراجعة شاملة لتقرير السلامة</li><li>تقرير PDF جاهز للاعتماد</li><li>متوافق 100% مع الكود المصري</li><li>الرد خلال 48 ساعة</li></ul><a href="Consulting.html" class="consult-btn">اطلب الخدمة</a></div>
+    <div class="consult-card enterprise"><div class="consult-type">متقدم</div><div class="consult-name">مراجعة الرسومات</div><div class="consult-price">5,000 ج.م</div><div class="consult-price-note">للمنشأة كاملة</div><ul class="consult-features"><li>مراجعة جميع رسومات الحريق</li><li>تقرير فني كامل للاعتماد</li><li>ترشيح الموردين والمقاولين</li><li>متابعة استشارية مستمرة</li></ul><a href="Consulting.html" class="consult-btn">طلب عرض</a></div>
+  </div>
+</section>
+
+<!-- ========== CTA ========== -->
+<div class="cta-section fade-up">
+  <div class="cta-inner" style="max-width: 700px; margin: auto;">
+    <h2 class="cta-title" style="font-size: clamp(26px, 5vw, 44px); font-weight: 900;">ابدأ مشروعك بالشكل الصحيح</h2>
+    <p class="cta-sub" style="color: var(--gray-mid); margin-bottom: 30px;">انضم إلى أكثر من 250 مهندساً ومقاولاً يثقون في FireHub EG</p>
+    <div class="hero-actions" style="justify-content: center;">
+      <a href="Consulting.html" class="btn-primary">تواصل مع خبرائنا →</a>
+      <a href="Suppliers.html" class="btn-secondary">سجل كمورد / مقاول</a>
+    </div>
+  </div>
+</div>
+
+<!-- ========== فوتر ========== -->
+<footer>
+  <div class="footer-container">
+    <div class="footer-col">
+      <div class="logo-text"><span class="fire">Fire</span><span class="hub">Hub</span> EG</div>
+      <p class="footer-desc">أول منصة هندسية متكاملة لمكافحة الحريق في مصر، نربط الخبراء بالموردين والمقاولين لضمان أعلى معايير السلامة.</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>روابط سريعة</h4>
+      <ul>
+        <li><a href="Home.html">الرئيسية</a></li>
+        <li><a href="Suppliers.html">الموردون</a></li>
+        <li><a href="Consulting.html">الاستشارات</a></li>
+        <li><a href="Articles.html">المكتبة الهندسية</a></li>
+        <li><a href="Who%20are%20we.html">من نحن</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>الدعم</h4>
+      <ul>
+        <li><a href="Consulting.html">تواصل معنا</a></li>
+        <li><a href="#">الأسئلة الشائعة</a></li>
+        <li><a href="#">سياسة الخصوصية</a></li>
+        <li><a href="#">الشروط والأحكام</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>النشرة البريدية</h4>
+      <p style="font-size: 13px; color: var(--gray-mid); margin-bottom: 12px;">آخر المقالات والعروض لبريدك</p>
+      <div class="newsletter-form">
+        <input type="email" placeholder="بريدك الإلكتروني">
+        <button onclick="alert('شكراً! تم الاشتراك بنجاح.')">اشترك</button>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 FireHub EG — جميع الحقوق محفوظة. تصميم هندسي متكامل لمستقبل أكثر أماناً.</p>
+  </div>
+</footer>
+
+<script>
+  function toggleMobile() {
+    const menu = document.getElementById('mobileMenu');
+    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+  }
+  window.addEventListener('scroll', function() {
+    const nav = document.getElementById('navbar');
+    if (window.scrollY > 50) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
+  const fadeElements = document.querySelectorAll('.fade-up');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: "0px 0px -30px 0px" });
+  fadeElements.forEach(el => observer.observe(el));
+  setTimeout(() => {
+    fadeElements.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight - 100) el.classList.add('visible');
+    });
+  }, 100);
+  // Close mobile menu on link click
+  document.querySelectorAll('.mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.getElementById('mobileMenu').style.display = 'none';
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>الموردون | FireHub EG</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+  /* ========== متغيرات الألوان الموحدة ========== */
+  :root {
+    --primary: #0f5b9c;
+    --primary-dark: #083c68;
+    --primary-glow: rgba(15, 91, 156, 0.35);
+    --secondary: #2dd4bf;
+    --accent-gold: #fbbf24;
+    --dark-bg: #07090e;
+    --dark-card: #0f1219;
+    --dark-elevated: #181d2b;
+    --white: #ffffff;
+    --gray-light: #eef2ff;
+    --gray-mid: #9ca3af;
+    --transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--dark-bg);
+    color: var(--gray-light);
+    font-family: 'Cairo', sans-serif;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--dark-card); }
+  ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+  /* ---------- NAVBAR متطور (ثابت مع تأثير سكرول) ---------- */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 18px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(7, 9, 14, 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+    transition: var(--transition);
+  }
+  nav.scrolled {
+    padding: 12px 60px;
+    background: rgba(7, 9, 14, 0.98);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    border-bottom-color: rgba(251, 191, 36, 0.3);
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: transform 0.2s;
+  }
+  .nav-logo:hover { transform: scale(1.02); }
+  .nav-logo svg { width: 38px; height: 38px; filter: drop-shadow(0 0 8px var(--primary-glow)); }
+  .nav-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand .fire { color: var(--white); }
+  .nav-brand .hub { color: var(--accent-gold); }
+  .nav-brand .eg { color: var(--accent-gold); font-size: 12px; margin-right: 3px; }
+  .nav-links {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+    align-items: center;
+  }
+  .nav-links a {
+    color: var(--gray-mid);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 40px;
+    transition: var(--transition);
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--accent-gold);
+    transition: 0.25s ease;
+    transform: translateX(50%);
+  }
+  .nav-links a:hover::after,
+  .nav-links a.active::after { width: 70%; }
+  .nav-links a:hover { color: var(--white); background: rgba(45, 212, 191, 0.08); }
+  .nav-links a.active { color: var(--white); background: rgba(15, 91, 156, 0.2); }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+    color: var(--white) !important;
+    padding: 8px 22px !important;
+    border-radius: 40px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 12px rgba(15, 91, 156, 0.4);
+  }
+  .nav-cta:hover {
+    background: linear-gradient(135deg, var(--primary-dark), #052a48) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(15, 91, 156, 0.5);
+  }
+  .nav-cta::after { display: none; }
+
+  /* هامبورجر (للموبايل) */
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 26px; height: 2px; background: var(--white); border-radius: 2px; }
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: rgba(7, 9, 14, 0.98);
+    backdrop-filter: blur(12px);
+    padding: 20px;
+    flex-direction: column;
+    gap: 8px;
+    border-bottom: 1px solid rgba(251, 191, 36, 0.2);
+    z-index: 999;
+  }
+  .mobile-menu a {
+    color: var(--gray-mid);
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: 0.2s;
+  }
+  .mobile-menu a:hover { background: rgba(45, 212, 191, 0.1); color: white; }
+  .mobile-cta { background: var(--primary); color: white !important; text-align: center; }
+
+  /* ========== أنيميشن الظهور عند التمرير (fade-up) ========== */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ========== هيرو الصفحة (عنوان ووصف تحت بعض) ========== */
+  .hero {
+    min-height: 50vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(110deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 45%, rgba(0,0,0,0.2) 100%),
+                url('https://images.pexels.com/photos/32632505/pexels-photo-32632505.jpeg') center/cover no-repeat;
+    background-size: cover;
+    margin-top: 70px;
+  }
+  .hero .container {
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 80px 60px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-content {
+    max-width: 650px;
+    text-align: left;          /* النص لليسار مع RTL */
+    margin-right: auto;
+    margin-left: 0;
+    display: flex;
+    flex-direction: column;    /* العناصر تحت بعضها تماماً */
+    gap: 1.2rem;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(15, 91, 156, 0.25);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--accent-gold);
+    border-radius: 60px;
+    padding: 6px 18px;
+    font-size: 12px;
+    color: var(--accent-gold);
+    font-weight: 600;
+    width: fit-content;
+  }
+  .badge-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--accent-gold);
+    border-radius: 50%;
+    animation: blink 1.5s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .hero-title {
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 900;
+    line-height: 1.2;
+    margin: 0;
+    background: linear-gradient(135deg, #ffffff, var(--secondary), var(--accent-gold));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  .hero-title .accent {
+    background: linear-gradient(135deg, var(--secondary), var(--accent-gold));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  .hero-sub {
+    font-size: 17px;
+    color: var(--gray-light);
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0;
+  }
+
+  /* ========== قسم الفلتر والبحث ========== */
+  .section {
+    padding: 80px 60px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  .filter-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .filter-btn {
+    padding: 8px 20px;
+    border-radius: 40px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: var(--gray-mid);
+    transition: var(--transition);
+  }
+  .filter-btn:hover,
+  .filter-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--dark-card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 60px;
+    padding: 10px 24px;
+    margin: 20px 0 32px;
+    transition: var(--transition);
+  }
+  .search-bar:focus-within {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 2px rgba(251,191,36,0.2);
+  }
+  .search-bar input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--white);
+    flex: 1;
+    font-size: 15px;
+  }
+  .search-bar input::placeholder { color: var(--gray-mid); }
+
+  /* ========== بطاقات الموردين (شبكة متجاوبة) ========== */
+  .suppliers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    margin-top: 20px;
+  }
+  .supplier-card {
+    background: var(--dark-card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 28px;
+    padding: 28px;
+    transition: var(--transition);
+    position: relative;
+  }
+  .supplier-card:hover {
+    border-color: var(--accent-gold);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 30px -12px rgba(0,0,0,0.5);
+  }
+  .supplier-card.featured {
+    border-color: var(--accent-gold);
+    background: linear-gradient(145deg, #0f1219, #0a0e16);
+  }
+  .supplier-card.featured::before {
+    content: 'مميز';
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: var(--accent-gold);
+    color: #0a0c10;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 40px;
+    letter-spacing: 0.5px;
+  }
+  .supplier-logo {
+    width: 56px;
+    height: 56px;
+    background: rgba(45, 212, 191, 0.1);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 18px;
+    transition: var(--transition);
+  }
+  .supplier-card:hover .supplier-logo {
+    background: var(--primary);
+    transform: scale(1.05);
+  }
+  .supplier-name {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .supplier-type {
+    font-size: 13px;
+    color: var(--accent-gold);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .supplier-desc {
+    font-size: 13px;
+    color: var(--gray-mid);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .supplier-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .tag {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 40px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: var(--gray-light);
+  }
+  .supplier-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .supplier-location {
+    font-size: 12px;
+    color: var(--gray-mid);
+  }
+  .supplier-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 6px 18px;
+    border-radius: 40px;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .supplier-btn:hover {
+    background: var(--accent-gold);
+    color: #0a0c10;
+    transform: translateY(-2px);
+  }
+
+  /* ========== صناديق تسجيل مورد/مقاول ========== */
+  .register-boxes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+    margin-top: 60px;
+  }
+  .register-card {
+    background: linear-gradient(135deg, #0a1420, #0f1a2a);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: 28px;
+    padding: 48px 32px;
+    text-align: center;
+    transition: var(--transition);
+  }
+  .register-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent-gold);
+    box-shadow: 0 20px 30px -10px rgba(0,0,0,0.4);
+  }
+  .register-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+  }
+  .register-card h2 {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: var(--white);
+  }
+  .register-card p {
+    color: var(--gray-mid);
+    margin-bottom: 28px;
+    font-size: 14px;
+  }
+  .register-btn {
+    background: var(--primary);
+    padding: 12px 28px;
+    border-radius: 40px;
+    text-decoration: none;
+    color: white;
+    font-weight: 700;
+    display: inline-block;
+    transition: var(--transition);
+  }
+  .register-btn:hover {
+    background: var(--accent-gold);
+    color: #0a0c10;
+    transform: translateY(-2px);
+  }
+
+  /* ========== فوتر احترافي (4 أعمدة) ========== */
+  footer {
+    background: #0a0c14;
+    padding: 60px 60px 30px;
+    border-top: 1px solid rgba(251, 191, 36, 0.2);
+  }
+  .footer-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 40px;
+  }
+  .footer-col {
+    flex: 1;
+    min-width: 180px;
+  }
+  .footer-col .logo-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 16px;
+  }
+  .footer-col .logo-text .fire { color: white; }
+  .footer-col .logo-text .hub { color: var(--accent-gold); }
+  .footer-desc {
+    color: var(--gray-mid);
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 16px 0 20px;
+  }
+  .social-links {
+    display: flex;
+    gap: 14px;
+  }
+  .social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 50%;
+    color: var(--gray-light);
+    font-size: 18px;
+    transition: var(--transition);
+    text-decoration: none;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+  }
+  .social-links a:hover {
+    background: var(--accent-gold);
+    color: #0a0c10;
+    transform: translateY(-3px);
+    border-color: var(--accent-gold);
+  }
+  .footer-col h4 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--white);
+    position: relative;
+    display: inline-block;
+  }
+  .footer-col h4::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    right: 0;
+    width: 35px;
+    height: 2px;
+    background: var(--accent-gold);
+    border-radius: 2px;
+  }
+  .footer-col ul {
+    list-style: none;
+  }
+  .footer-col ul li {
+    margin-bottom: 12px;
+  }
+  .footer-col ul li a {
+    color: var(--gray-mid);
+    text-decoration: none;
+    transition: 0.2s;
+    font-size: 14px;
+  }
+  .footer-col ul li a:hover {
+    color: var(--accent-gold);
+    padding-right: 5px;
+  }
+  .newsletter-form {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .newsletter-form input {
+    flex: 1;
+    background: var(--dark-elevated);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 40px;
+    padding: 10px 16px;
+    color: white;
+    font-family: 'Cairo', sans-serif;
+    outline: none;
+    transition: 0.2s;
+  }
+  .newsletter-form input:focus { border-color: var(--accent-gold); }
+  .newsletter-form button {
+    background: var(--primary);
+    border: none;
+    border-radius: 40px;
+    padding: 0 24px;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .newsletter-form button:hover {
+    background: var(--accent-gold);
+    color: #0a0c10;
+    transform: scale(1.02);
+  }
+  .footer-bottom {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 25px;
+    border-top: 1px solid rgba(251, 191, 36, 0.15);
+    color: var(--gray-dark);
+    font-size: 13px;
+  }
+
+  /* ========== تحسينات التجاوب (Responsive) ========== */
+  @media (max-width: 1024px) {
+    .suppliers-grid { grid-template-columns: repeat(2, 1fr); }
+    .register-boxes { grid-template-columns: 1fr; }
+    .footer-container { flex-direction: column; text-align: center; align-items: center; }
+    .social-links { justify-content: center; }
+    .footer-col h4::after { right: 50%; transform: translateX(50%); width: 50px; }
+  }
+  @media (max-width: 768px) {
+    nav { padding: 14px 24px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .hero .container { padding: 60px 24px; }
+    .hero-content {
+      max-width: 100%;
+      text-align: center;        /* في الموبايل يتم توسيط المحتوى */
+      margin: 0 auto;
+      align-items: center;
+    }
+    .hero-badge { margin: 0 auto; }
+    .hero-sub { max-width: 100%; }
+    .section { padding: 60px 24px; }
+    .suppliers-grid { grid-template-columns: 1fr; }
+    .filter-bar { justify-content: center; }
+    .search-bar { margin: 16px 0 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================================ شريط التنقل ================================ -->
+<nav id="navbar">
+  <a class="nav-logo" href="Home.html">
+    <svg viewBox="0 0 64 64" fill="none" width="38" height="38">
+      <path d="M32 4 L58 18 L58 46 L32 60 L6 46 L6 18 Z" fill="#0a0c10" stroke="#fbbf24" stroke-width="1.8"/>
+      <path d="M32 48C24 44 20 38 22 30C23 26 26 24 26 24C26 28 28 30 30 30C28 26 29 20 32 16C35 20 35 24 34 28C36 26 38 22 37 18C42 22 44 30 40 38C38 42 35 46 32 48Z" fill="url(#gradLogo)"/>
+      <defs><linearGradient id="gradLogo" x1="32" y1="48" x2="32" y2="16" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#0f5b9c"/><stop offset="100%" stop-color="#2dd4bf"/></linearGradient></defs>
+    </svg>
+    <div class="nav-brand"><span class="eg">EG&nbsp;</span><span class="fire">Fire</span><span class="hub">Hub</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">الرئيسية</a></li>
+    <li><a href="Suppliers.html" class="active">الموردون</a></li>
+    <li><a href="Consulting.html">الاستشارات</a></li>
+    <li><a href="Articles.html">المكتبة الهندسية</a></li>
+    <li><a href="Who%20are%20we.html">من نحن</a></li>
+    <li><a href="Contact.html" class="nav-cta">تواصل معنا</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">الرئيسية</a>
+    <a href="Suppliers.html">الموردون</a>
+    <a href="Consulting.html">الاستشارات</a>
+    <a href="Articles.html">المكتبة الهندسية</a>
+    <a href="Who%20are%20we.html">من نحن</a>
+    <a href="Contact.html" class="mobile-cta">تواصل معنا</a>
+  </div>
+</nav>
+
+<!-- ================================ هيرو الصفحة ================================ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content fade-up">
+      <div class="hero-badge"><div class="badge-dot"></div> دليل معتمد</div>
+      <h1 class="hero-title">الموردون والمنتجات<br><span class="accent">في مكان واحد</span></h1>
+      <p class="hero-sub">دليل شامل لأفضل موردي مكافحة الحريق في مصر – طلمبات، مواسير، إنذار، إطفاء، ورشاشات.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================================ الفلتر والبحث ================================ -->
+<section class="section fade-up">
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterSuppliers('all')">الكل</button>
+    <button class="filter-btn" onclick="filterSuppliers('pump')">طرمبات</button>
+    <button class="filter-btn" onclick="filterSuppliers('pipe')">مواسير وفيتنج</button>
+    <button class="filter-btn" onclick="filterSuppliers('alarm')">أنظمة إنذار</button>
+    <button class="filter-btn" onclick="filterSuppliers('sprinkler')">Sprinkler</button>
+    <button class="filter-btn" onclick="filterSuppliers('ext')">طفايات</button>
+  </div>
+  <div class="search-bar">
+    <span>🔍</span>
+    <input type="text" placeholder="ابحث عن مورد أو منتج..." oninput="searchSuppliers(this.value)">
+  </div>
+
+  <div class="suppliers-grid" id="suppliersGrid">
+    <div class="supplier-card featured" data-cat="pump">
+      <div class="supplier-logo">🏭</div>
+      <div class="supplier-name">شركة النيل للحماية</div>
+      <div class="supplier-type">طرمبات الحريق</div>
+      <div class="supplier-desc">توريد وتركيب طرمبات Grundfos, Pentair, Ebara</div>
+      <div class="supplier-tags"><span class="tag">Grundfos</span><span class="tag">Pentair</span></div>
+      <div class="supplier-footer"><span class="supplier-location">📍 القاهرة</span><button class="supplier-btn" onclick="location.href='Consulting.html'">تواصل</button></div>
+    </div>
+    <div class="supplier-card" data-cat="pipe">
+      <div class="supplier-logo">🔧</div>
+      <div class="supplier-name">مصر للمواسير</div>
+      <div class="supplier-type">مواسير وفيتنج</div>
+      <div class="supplier-desc">مواسير حديد أسود وفيتنج معتمد</div>
+      <div class="supplier-tags"><span class="tag">حديد</span><span class="tag">فيتنج</span></div>
+      <div class="supplier-footer"><span class="supplier-location">📍 الإسكندرية</span><button class="supplier-btn" onclick="location.href='Consulting.html'">تواصل</button></div>
+    </div>
+    <div class="supplier-card featured" data-cat="alarm">
+      <div class="supplier-logo">🚨</div>
+      <div class="supplier-name">تك فاير سيستمز</div>
+      <div class="supplier-type">أنظمة الإنذار</div>
+      <div class="supplier-desc">Hochiki, Notifier, Honeywell</div>
+      <div class="supplier-tags"><span class="tag">Hochiki</span><span class="tag">Notifier</span></div>
+      <div class="supplier-footer"><span class="supplier-location">📍 المعادي</span><button class="supplier-btn" onclick="location.href='Consulting.html'">تواصل</button></div>
+    </div>
+    <div class="supplier-card" data-cat="sprinkler">
+      <div class="supplier-logo">💧</div>
+      <div class="supplier-name">الخليج للرشاشات</div>
+      <div class="supplier-type">Sprinkler Systems</div>
+      <div class="supplier-desc">Viking, Tyco, Central</div>
+      <div class="supplier-tags"><span class="tag">Viking</span><span class="tag">Tyco</span></div>
+      <div class="supplier-footer"><span class="supplier-location">📍 عين شمس</span><button class="supplier-btn" onclick="location.href='Consulting.html'">تواصل</button></div>
+    </div>
+    <div class="supplier-card" data-cat="ext">
+      <div class="supplier-logo">🧯</div>
+      <div class="supplier-name">سيف جارد مصر</div>
+      <div class="supplier-type">طفايات الحريق</div>
+      <div class="supplier-desc">مسحوق، CO2، رغوة</div>
+      <div class="supplier-tags"><span class="tag">مسحوق</span><span class="tag">CO2</span></div>
+      <div class="supplier-footer"><span class="supplier-location">📍 الجيزة</span><button class="supplier-btn" onclick="location.href='Consulting.html'">تواصل</button></div>
+    </div>
+    <div class="supplier-card" data-cat="pipe">
+      <div class="supplier-logo">🌀</div>
+      <div class="supplier-name">النهضة للتجهيزات</div>
+      <div class="supplier-type">بكرات خرطوم</div>
+      <div class="supplier-desc">بكرات خزانات وملحقات</div>
+      <div class="supplier-tags"><span class="tag">بكرات</span><span class="tag">خزانات</span></div>
+      <div class="supplier-footer"><span class="supplier-location">📍 شبرا</span><button class="supplier-btn" onclick="location.href='Consulting.html'">تواصل</button></div>
+    </div>
+  </div>
+
+  <!-- ================================ تسجيل مورد / مقاول ================================ -->
+  <div class="register-boxes fade-up">
+    <div class="register-card">
+      <div class="register-icon">🏭</div>
+      <h2>سجل كمورد</h2>
+      <p>اظهر أمام المهندسين والمقاولين – اشتراك شهري 800 جنيه</p>
+      <a href="Consulting.html" class="register-btn">سجل الآن →</a>
+    </div>
+    <div class="register-card">
+      <div class="register-icon">👷</div>
+      <h2>سجل كمقاول</h2>
+      <p>انضم لقائمة المقاولين المعتمدين واحصل على مشاريع جديدة</p>
+      <a href="Consulting.html" class="register-btn">سجل الآن →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================================ فوتر احترافي ================================ -->
+<footer>
+  <div class="footer-container">
+    <div class="footer-col">
+      <div class="logo-text"><span class="fire">Fire</span><span class="hub">Hub</span> EG</div>
+      <p class="footer-desc">أول منصة هندسية متكاملة لمكافحة الحريق في مصر، نربط الخبراء بالموردين والمقاولين.</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>روابط سريعة</h4>
+      <ul>
+        <li><a href="Home.html">الرئيسية</a></li>
+        <li><a href="Suppliers.html">الموردون</a></li>
+        <li><a href="Consulting.html">الاستشارات</a></li>
+        <li><a href="Articles.html">المكتبة الهندسية</a></li>
+        <li><a href="Who%20are%20we.html">من نحن</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>الدعم</h4>
+      <ul>
+        <li><a href="Consulting.html">تواصل معنا</a></li>
+        <li><a href="#">الأسئلة الشائعة</a></li>
+        <li><a href="#">سياسة الخصوصية</a></li>
+        <li><a href="#">الشروط والأحكام</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>النشرة البريدية</h4>
+      <p style="font-size: 13px; color: var(--gray-mid); margin-bottom: 12px;">آخر المقالات والعروض لبريدك</p>
+      <div class="newsletter-form">
+        <input type="email" placeholder="بريدك الإلكتروني">
+        <button onclick="alert('شكراً! تم الاشتراك بنجاح.')">اشترك</button>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 FireHub EG — جميع الحقوق محفوظة. تصميم هندسي متكامل لمستقبل أكثر أماناً.</p>
+  </div>
+</footer>
+
+<script>
+  // ========== تبديل القائمة الموبايل ==========
+  function toggleMobile() {
+    const menu = document.getElementById('mobileMenu');
+    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+  }
+
+  // ========== تأثير تمرير النافبار ==========
+  window.addEventListener('scroll', function() {
+    const nav = document.getElementById('navbar');
+    if (window.scrollY > 50) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
+
+  // ========== فلترة الموردين حسب التصنيف ==========
+  function filterSuppliers(cat) {
+    document.querySelectorAll('#suppliersGrid .supplier-card').forEach(card => {
+      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'block' : 'none';
+    });
+  }
+
+  // ========== البحث في الموردين ==========
+  function searchSuppliers(val) {
+    const v = val.toLowerCase();
+    document.querySelectorAll('#suppliersGrid .supplier-card').forEach(card => {
+      card.style.display = card.textContent.toLowerCase().includes(v) ? 'block' : 'none';
+    });
+  }
+
+  // ========== تفعيل الزر النشط في الفلتر ==========
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // ========== أنيميشن الظهور عند التمرير (Intersection Observer) ==========
+  const fadeElements = document.querySelectorAll('.fade-up');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: "0px 0px -30px 0px" });
+  fadeElements.forEach(el => observer.observe(el));
+  // تفعيل فوري للعناصر التي تظهر في أول تحميل
+  setTimeout(() => {
+    fadeElements.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight - 100) el.classList.add('visible');
+    });
+  }, 100);
+</script>
+</body>
+</html>

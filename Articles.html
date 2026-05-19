@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>المكتبة الهندسية | FireHub EG</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+  /* ========== المتغيرات الأساسية ========== */
+  :root {
+    --primary: #0f5b9c;
+    --primary-dark: #083c68;
+    --primary-glow: rgba(15, 91, 156, 0.35);
+    --secondary: #2dd4bf;
+    --accent-gold: #fbbf24;
+    --dark-bg: #07090e;
+    --dark-card: #0f1219;
+    --dark-elevated: #181d2b;
+    --white: #ffffff;
+    --gray-light: #eef2ff;
+    --gray-mid: #9ca3af;
+    --transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    --transition-slow: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+  }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+  body {
+    background: var(--dark-bg);
+    color: var(--gray-light);
+    font-family: 'Cairo', sans-serif;
+    overflow-x: hidden;
+    line-height: 1.6;
+    width: 100%;
+  }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--dark-card); }
+  ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+  /* ========== NAVBAR متطور ========== */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 18px 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(7, 9, 14, 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(251, 191, 36, 0.15);
+    transition: var(--transition);
+  }
+  nav.scrolled {
+    padding: 12px 5%;
+    background: rgba(7, 9, 14, 0.98);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    border-bottom-color: rgba(251, 191, 36, 0.3);
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: transform 0.2s;
+  }
+  .nav-logo svg {
+    width: 38px;
+    height: 38px;
+    filter: drop-shadow(0 0 8px var(--primary-glow));
+  }
+  .nav-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: clamp(18px, 5vw, 22px);
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+  }
+  .nav-brand .fire { color: var(--white); }
+  .nav-brand .hub { color: var(--accent-gold); }
+  .nav-brand .eg { color: var(--accent-gold); font-size: 0.7em; margin-right: 3px; }
+  .nav-links {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+    align-items: center;
+  }
+  .nav-links a {
+    color: var(--gray-mid);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 40px;
+    transition: var(--transition);
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--accent-gold);
+    transition: 0.25s ease;
+    transform: translateX(50%);
+  }
+  .nav-links a:hover::after, .nav-links a.active::after { width: 70%; }
+  .nav-links a:hover { color: var(--white); background: rgba(45, 212, 191, 0.08); transform: translateY(-2px); }
+  .nav-links a.active { color: var(--white); background: rgba(15, 91, 156, 0.2); }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+    color: var(--white) !important;
+    padding: 8px 22px !important;
+    border-radius: 40px !important;
+    box-shadow: 0 2px 12px rgba(15, 91, 156, 0.4);
+  }
+  .nav-cta:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 22px rgba(15, 91, 156, 0.6);
+  }
+  .nav-cta::after { display: none; }
+
+  /* هامبورجر */
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 26px; height: 2px; background: var(--white); border-radius: 2px; }
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: rgba(7, 9, 14, 0.98);
+    backdrop-filter: blur(12px);
+    padding: 20px;
+    flex-direction: column;
+    gap: 8px;
+    border-bottom: 1px solid rgba(251, 191, 36, 0.2);
+    z-index: 999;
+  }
+  .mobile-menu a {
+    color: var(--gray-mid);
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: 0.2s;
+  }
+  .mobile-menu a:hover { background: rgba(45, 212, 191, 0.1); color: white; transform: translateX(-5px); }
+  .mobile-cta { background: var(--primary); color: white !important; text-align: center; }
+
+  /* أنيميشن سكرول */
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(50px) scale(0.96);
+    transition: var(--transition-slow);
+  }
+  .scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .stagger-item:nth-child(1) { transition-delay: 0.05s; }
+  .stagger-item:nth-child(2) { transition-delay: 0.15s; }
+  .stagger-item:nth-child(3) { transition-delay: 0.25s; }
+
+  /* ========== هيدر الصفحة ========== */
+  .page-header {
+    padding: 160px 5% 80px;
+    text-align: center;
+    position: relative;
+    min-height: 80vh;
+    background-image: linear-gradient(110deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.5) 100%), url('https://images.pexels.com/photos/5324965/pexels-photo-5324965.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center top;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .page-header .header-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .page-label {
+    color: var(--accent-gold);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+  }
+  .page-label::before,
+  .page-label::after {
+    content: '';
+    width: 32px;
+    height: 2px;
+    background: var(--accent-gold);
+    border-radius: 2px;
+  }
+  .page-label::after {
+    margin-right: 10px;
+  }
+  .page-title {
+    font-size: clamp(32px, 6vw, 58px);
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ffffff, var(--secondary), var(--accent-gold));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  .page-title .accent { background: none; color: var(--secondary); }
+  .page-desc {
+    font-size: 18px;
+    color: var(--gray-light);
+    max-width: 600px;
+    margin: 0 auto;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+
+  /* ========== الأقسام ========== */
+  .section {
+    padding: 80px 5%;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  .section-label {
+    color: var(--accent-gold);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::before {
+    content: '';
+    width: 32px;
+    height: 2px;
+    background: var(--accent-gold);
+    border-radius: 2px;
+  }
+  .section-title {
+    font-size: clamp(26px, 4vw, 40px);
+    font-weight: 900;
+    margin-bottom: 20px;
+    color: var(--white);
+  }
+
+  /* شريط الفلاتر وزر الإضافة */
+  .tools-bar {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 40px;
+    gap: 15px;
+  }
+  .filter-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 8px 20px;
+    border-radius: 60px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--gray-mid);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .filter-btn:hover {
+    border-color: var(--accent-gold);
+    color: var(--white);
+    transform: translateY(-2px);
+  }
+  .filter-btn.active {
+    background: linear-gradient(95deg, var(--primary), #1a74b3);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 12px rgba(15,91,156,0.3);
+  }
+  .btn-add {
+    background: linear-gradient(95deg, var(--primary), #1a74b3);
+    color: white;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 60px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .btn-add:hover {
+    background: linear-gradient(95deg, var(--primary-dark), #0a4a7a);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15,91,156,0.4);
+  }
+
+  /* نموذج إضافة ملف */
+  .add-panel {
+    background: linear-gradient(145deg, #0a1428, #0c1a32);
+    border: 1px solid var(--accent-gold);
+    border-radius: 32px;
+    padding: 32px;
+    margin-bottom: 40px;
+    transition: var(--transition);
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-light);
+    display: block;
+    margin-bottom: 8px;
+  }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: var(--dark-elevated);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 12px 18px;
+    color: white;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    transition: 0.2s;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 3px rgba(251,191,36,0.2);
+  }
+  .form-textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  .file-input {
+    background: var(--dark-elevated);
+    padding: 10px;
+    border-radius: 16px;
+    color: var(--gray-mid);
+  }
+  .form-submit {
+    background: linear-gradient(95deg, var(--primary), #1a74b3);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 60px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+  }
+  .form-submit:hover {
+    background: linear-gradient(95deg, var(--primary-dark), #0a4a7a);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(15,91,156,0.4);
+  }
+
+  /* كروت المكتبة */
+  .library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 28px;
+    margin-top: 20px;
+  }
+  .file-card {
+    background: var(--dark-card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 28px;
+    padding: 28px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .file-card:hover {
+    border-color: var(--accent-gold);
+    transform: translateY(-10px);
+    box-shadow: 0 25px 35px -15px rgba(0,0,0,0.6);
+  }
+  .file-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--accent-gold));
+    transform: translateX(-100%);
+    transition: transform 0.4s;
+  }
+  .file-card:hover::before { transform: translateX(0); }
+  .file-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+  }
+  .file-icon.pdf { color: #e74c3c; }
+  .file-icon.ppt { color: #e67e22; }
+  .file-icon.word { color: #3498db; }
+  .file-icon.autocad { color: #fbbf24; }  /* ذهبي لملفات الأوتوكاد */
+  .file-icon.default { color: var(--accent-gold); }
+  .file-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: var(--white);
+  }
+  .file-desc {
+    font-size: 14px;
+    color: var(--gray-mid);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  .file-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--gray-mid);
+    margin-bottom: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .file-cat {
+    background: rgba(45,212,191,0.15);
+    padding: 4px 12px;
+    border-radius: 40px;
+    color: var(--secondary);
+  }
+  .file-type-badge {
+    background: rgba(255,255,255,0.08);
+    padding: 4px 10px;
+    border-radius: 40px;
+    font-size: 11px;
+    text-transform: uppercase;
+  }
+  .card-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn-preview, .btn-download {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 40px;
+    font-weight: 700;
+    font-size: 13px;
+    transition: var(--transition);
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    background: rgba(255,255,255,0.05);
+    color: var(--gray-light);
+  }
+  .btn-preview {
+    background: rgba(15, 91, 156, 0.2);
+    border: 1px solid var(--primary);
+  }
+  .btn-preview:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+  }
+  .btn-download {
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid var(--accent-gold);
+  }
+  .btn-download:hover {
+    background: var(--accent-gold);
+    color: #0a0c10;
+    transform: translateY(-2px);
+  }
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--gray-mid);
+  }
+  .empty-state i {
+    font-size: 64px;
+    margin-bottom: 20px;
+    color: var(--primary);
+  }
+
+  /* مودال معاينة PDF */
+  .pdf-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 2000;
+    padding: 40px 5%;
+    overflow-y: auto;
+    backdrop-filter: blur(8px);
+  }
+  .pdf-modal-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--dark-card);
+    border-radius: 32px;
+    padding: 20px;
+    border: 1px solid var(--accent-gold);
+  }
+  .pdf-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .pdf-modal-header h3 {
+    color: var(--accent-gold);
+  }
+  .close-modal {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+  }
+  .pdf-embed {
+    width: 100%;
+    height: 70vh;
+    border: none;
+    border-radius: 16px;
+  }
+
+  /* فوتر */
+  footer {
+    background: #0a0c14;
+    padding: 60px 5% 30px;
+    border-top: 1px solid rgba(251, 191, 36, 0.2);
+  }
+  .footer-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 40px;
+  }
+  .footer-col { flex: 1; min-width: 180px; }
+  .footer-col .logo-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(24px, 5vw, 28px);
+    font-weight: 900;
+    margin-bottom: 16px;
+  }
+  .footer-col .logo-text .fire { color: white; }
+  .footer-col .logo-text .hub { color: var(--accent-gold); }
+  .footer-desc {
+    color: var(--gray-mid);
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 16px 0 20px;
+  }
+  .social-links { display: flex; gap: 14px; flex-wrap: wrap; }
+  .social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 50%;
+    color: var(--gray-light);
+    font-size: 18px;
+    transition: var(--transition);
+    text-decoration: none;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+  }
+  .social-links a:hover {
+    background: var(--accent-gold);
+    color: #0a0c10;
+    transform: translateY(-5px) rotate(360deg);
+  }
+  .footer-col h4 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--white);
+    position: relative;
+    display: inline-block;
+  }
+  .footer-col h4::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    right: 0;
+    width: 35px;
+    height: 2px;
+    background: var(--accent-gold);
+    border-radius: 2px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 12px; }
+  .footer-col ul li a {
+    color: var(--gray-mid);
+    text-decoration: none;
+    transition: 0.2s;
+    font-size: 14px;
+  }
+  .footer-col ul li a:hover { color: var(--accent-gold); padding-right: 6px; }
+  .footer-bottom {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 25px;
+    border-top: 1px solid rgba(251, 191, 36, 0.15);
+    font-size: 13px;
+    color: var(--gray-mid);
+  }
+
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .page-header { padding: 130px 5% 60px; min-height: 60vh; }
+    .section { padding: 60px 5%; }
+    .tools-bar { flex-direction: column; align-items: stretch; }
+    .filter-bar { justify-content: center; }
+    .btn-add { align-self: center; }
+    .footer-container { flex-direction: column; text-align: center; align-items: center; }
+    .social-links { justify-content: center; }
+    .footer-col h4::after { right: 50%; transform: translateX(50%); width: 50px; }
+  }
+  @media (max-width: 680px) {
+    .library-grid { grid-template-columns: 1fr; }
+    .add-panel { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a class="nav-logo" href="Home.html">
+    <svg viewBox="0 0 64 64" fill="none" width="38" height="38">
+      <path d="M32 4 L58 18 L58 46 L32 60 L6 46 L6 18 Z" fill="#0a0c10" stroke="#fbbf24" stroke-width="1.8"/>
+      <path d="M32 48C24 44 20 38 22 30C23 26 26 24 26 24C26 28 28 30 30 30C28 26 29 20 32 16C35 20 35 24 34 28C36 26 38 22 37 18C42 22 44 30 40 38C38 42 35 46 32 48Z" fill="url(#gradLogo)"/>
+      <defs><linearGradient id="gradLogo" x1="32" y1="48" x2="32" y2="16" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#0f5b9c"/><stop offset="100%" stop-color="#2dd4bf"/></linearGradient></defs>
+    </svg>
+    <div class="nav-brand"><span class="eg">EG&nbsp;</span><span class="fire">Fire</span><span class="hub">Hub</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">الرئيسية</a></li>
+    <li><a href="Suppliers.html">الموردون</a></li>
+    <li><a href="Consulting.html">الاستشارات</a></li>
+    <li><a href="Articles.html" class="active"> المقالات </a></li>
+    <li><a href="Whoarewe.html">من نحن</a></li>
+    <li><a href="Contact.html" class="nav-cta">تواصل معنا</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">الرئيسية</a>
+    <a href="Suppliers.html">الموردون</a>
+    <a href="Consulting.html">الاستشارات</a>
+    <a href="Articles.html">المقالات  </a>
+    <a href="Whoarewe.html">من نحن</a>
+    <a href="Contact.html" class="mobile-cta">تواصل معنا</a>
+  </div>
+</nav>
+
+<!-- هيدر الصفحة -->
+<div class="page-header scroll-reveal">
+  <div class="header-content">
+    <div class="page-label">المكتبة الهندسية</div>
+    <h1 class="page-title">ملفات ومراجع <span class="accent">هندسية متخصصة</span></h1>
+    <p class="page-desc">تحميل ومعاينة كتيبات، مواصفات، عروض تقديمية، رسومات أوتوكاد، ومراجع أنظمة مكافحة الحريق (PDF, PPT, Word, DWG, DXF)</p>
+  </div>
+</div>
+
+<section class="section scroll-reveal">
+  <div class="tools-bar">
+    <div class="filter-bar" id="filterBar"></div>
+    <button class="btn-add" onclick="toggleAddPanel()"><i class="fas fa-plus"></i> إضافة ملف</button>
+  </div>
+
+  <!-- لوحة إضافة ملف -->
+  <div id="addPanel" class="add-panel" style="display: none;">
+    <div class="form-group">
+      <label class="form-label">عنوان الملف</label>
+      <input type="text" id="fileTitle" class="form-input" placeholder="مثال: دليل أنظمة الإطفاء">
+    </div>
+    <div class="form-group">
+      <label class="form-label">الوصف</label>
+      <textarea id="fileDesc" class="form-textarea" placeholder="وصف مختصر للملف"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">التصنيف</label>
+      <select id="fileCat" class="form-select">
+        <option value="الكود المصري">الكود المصري</option>
+        <option value="مقارنة براندات">مقارنة براندات</option>
+        <option value="تصميم الأنظمة">تصميم الأنظمة</option>
+        <option value="كتالوجات">كتالوجات</option>
+        <option value="محاضرات">محاضرات</option>
+        <option value="رسومات أوتوكاد">رسومات أوتوكاد</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">نوع الملف</label>
+      <select id="fileType" class="form-select">
+        <option value="pdf">PDF</option>
+        <option value="ppt">PowerPoint</option>
+        <option value="word">Word</option>
+        <option value="autocad">AutoCAD (DWG/DXF)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">رابط الملف (URL) أو قم برفع ملف</label>
+      <input type="text" id="fileUrl" class="form-input" placeholder="https://example.com/file.pdf">
+    </div>
+    <div class="form-group">
+      <label class="form-label">أو اختر ملف من جهازك</label>
+      <input type="file" id="fileUpload" accept=".pdf,.ppt,.pptx,.doc,.docx,.dwg,.dxf" class="file-input form-input">
+      <small style="color: var(--gray-mid); display: block; margin-top: 5px;">الامتدادات المدعومة: PDF, PPT, PPTX, DOC, DOCX, DWG, DXF</small>
+    </div>
+    <button class="form-submit" onclick="addFile()">نشر الملف <i class="fas fa-upload"></i></button>
+  </div>
+
+  <!-- شبكة الكروت -->
+  <div id="libraryGrid" class="library-grid"></div>
+  <div id="emptyState" class="empty-state" style="display: none;">
+    <i class="fas fa-folder-open"></i>
+    <h3>لا توجد ملفات بعد</h3>
+    <p>أضف أول ملف باستخدام الزر أعلاه</p>
+  </div>
+</section>
+
+<!-- مودال معاينة PDF (للملفات من نوع PDF فقط) -->
+<div id="pdfModal" class="pdf-modal" onclick="closeModalOnOutside(event)">
+  <div class="pdf-modal-content">
+    <div class="pdf-modal-header">
+      <h3 id="modalTitle">معاينة الملف</h3>
+      <button class="close-modal" onclick="closePDFModal()">&times;</button>
+    </div>
+    <iframe id="pdfIframe" class="pdf-embed" src=""></iframe>
+  </div>
+</div>
+
+<!-- فوتر -->
+<footer>
+  <div class="footer-container">
+    <div class="footer-col">
+      <div class="logo-text"><span class="fire">Fire</span><span class="hub">Hub</span> EG</div>
+      <p class="footer-desc">أول منصة هندسية متكاملة لمكافحة الحريق في مصر، نربط الخبراء بالموردين والمقاولين لضمان أعلى معايير السلامة.</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>روابط سريعة</h4>
+      <ul>
+        <li><a href="Home.html">الرئيسية</a></li>
+        <li><a href="Suppliers.html">الموردون</a></li>
+        <li><a href="Consulting.html">الاستشارات</a></li>
+        <li><a href="Articles.html">المكتبة الهندسية</a></li>
+        <li><a href="Who%20are%20we.html">من نحن</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>الدعم</h4>
+      <ul>
+        <li><a href="Consulting.html">تواصل معنا</a></li>
+        <li><a href="#">الأسئلة الشائعة</a></li>
+        <li><a href="#">سياسة الخصوصية</a></li>
+        <li><a href="#">الشروط والأحكام</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>النشرة البريدية</h4>
+      <p style="font-size: 13px; color: var(--gray-mid); margin-bottom: 12px;">آخر المقالات والعروض لبريدك</p>
+      <div class="newsletter-form" style="display: flex; gap: 8px;">
+        <input type="email" placeholder="بريدك الإلكتروني" style="flex:1; background:var(--dark-elevated); border:1px solid rgba(255,255,255,0.08); border-radius:40px; padding:10px 16px;">
+        <button onclick="alert('شكراً! تم الاشتراك بنجاح.')" style="background:var(--primary); border:none; border-radius:40px; padding:0 20px; color:white;">اشترك</button>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 FireHub EG — جميع الحقوق محفوظة. تصميم هندسي متكامل لمستقبل أكثر أماناً.</p>
+  </div>
+</footer>
+
+<script>
+  // قاعدة بيانات الملفات (تدعم PDF, PPT, Word, AutoCAD)
+  let filesDatabase = [
+    {
+      id: 1,
+      title: "دليل الكود المصري للحريق 2023",
+      desc: "النسخة المحدثة من الكود المصري لأنظمة الحماية من الحريق – الفصول الرئيسية والاشتراطات.",
+      cat: "الكود المصري",
+      type: "pdf",
+      url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      fileName: "dummy.pdf"
+    },
+    {
+      id: 2,
+      title: "مقارنة بين أنظمة FM200 و NOVEC",
+      desc: "تحليل تقني شامل لأنظمة الإطفاء الغازي ومزايا كل نظام.",
+      cat: "مقارنة براندات",
+      type: "ppt",
+      url: "https://file-examples.com/storage/fe8c7eef0c6364f6c9504cc/2017/08/file_example_PPT_1MB.ppt",
+      fileName: "comparison.ppt"
+    },
+    {
+      id: 3,
+      title: "أساسيات تصميم شبكات الرشاشات",
+      desc: "شرح خطوات تصميم شبكات sprinkler وفق NFPA 13 والكود المصري.",
+      cat: "تصميم الأنظمة",
+      type: "word",
+      url: "https://file-examples.com/storage/fe8c7eef0c6364f6c9504cc/2017/02/file_example_DOC_100kB.doc",
+      fileName: "sprinkler_guide.doc"
+    },
+    {
+      id: 4,
+      title: "مخطط نموذج لغرفة مضخات الحريق - أوتوكاد",
+      desc: "رسم أوتوكاد (DWG) يوضح توزيع مضخات الحريق ومواسير الطرد والحماية.",
+      cat: "رسومات أوتوكاد",
+      type: "autocad",
+      url: "https://www.mediafire.com/file/4m6g6s6v6q6p6s6/sample.dwg/file",  // رابط توضيحي
+      fileName: "fire_pump_room.dwg"
+    }
+  ];
+  let currentFilter = 'all';
+
+  function saveToLocal() {
+    localStorage.setItem('firehub_files', JSON.stringify(filesDatabase));
+  }
+  function loadFromLocal() {
+    const stored = localStorage.getItem('firehub_files');
+    if (stored) {
+      filesDatabase = JSON.parse(stored);
+    }
+  }
+
+  function renderFilters() {
+    const cats = ['all', 'الكود المصري', 'مقارنة براندات', 'تصميم الأنظمة', 'كتالوجات', 'محاضرات', 'رسومات أوتوكاد'];
+    const container = document.getElementById('filterBar');
+    container.innerHTML = cats.map(c => `<button class="filter-btn ${c === currentFilter ? 'active' : ''}" onclick="filterBy('${c}')">${c === 'all' ? 'الكل' : c}</button>`).join('');
+  }
+
+  function getFileIcon(type) {
+    switch(type) {
+      case 'pdf': return '<i class="fas fa-file-pdf"></i>';
+      case 'ppt': return '<i class="fas fa-file-powerpoint"></i>';
+      case 'word': return '<i class="fas fa-file-word"></i>';
+      case 'autocad': return '<i class="fas fa-drafting-compass"></i>';
+      default: return '<i class="fas fa-file"></i>';
+    }
+  }
+  function getFileIconClass(type) {
+    if(type === 'pdf') return 'pdf';
+    if(type === 'ppt') return 'ppt';
+    if(type === 'word') return 'word';
+    if(type === 'autocad') return 'autocad';
+    return 'default';
+  }
+  function getFileTypeLabel(type) {
+    if(type === 'pdf') return 'PDF';
+    if(type === 'ppt') return 'PowerPoint';
+    if(type === 'word') return 'Word';
+    if(type === 'autocad') return 'AutoCAD';
+    return type;
+  }
+
+  function renderLibrary() {
+    const grid = document.getElementById('libraryGrid');
+    const empty = document.getElementById('emptyState');
+    let filtered = filesDatabase;
+    if (currentFilter !== 'all') {
+      filtered = filesDatabase.filter(item => item.cat === currentFilter);
+    }
+    if (filtered.length === 0) {
+      grid.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    grid.innerHTML = filtered.map((file, idx) => `
+      <div class="file-card stagger-item">
+        <div class="file-icon ${getFileIconClass(file.type)}">${getFileIcon(file.type)}</div>
+        <div class="file-title">${escapeHtml(file.title)}</div>
+        <div class="file-desc">${escapeHtml(file.desc)}</div>
+        <div class="file-meta">
+          <span class="file-cat"><i class="fas fa-tag"></i> ${file.cat}</span>
+          <span class="file-type-badge"><i class="fas fa-file"></i> ${getFileTypeLabel(file.type)}</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn-preview" onclick="previewFile('${file.url}', '${file.type}', '${escapeHtml(file.title)}')"><i class="fas fa-eye"></i> معاينة</button>
+          <button class="btn-download" onclick="downloadFile('${file.url}', '${file.fileName}')"><i class="fas fa-download"></i> تنزيل</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function addFile() {
+    const title = document.getElementById('fileTitle').value.trim();
+    const desc = document.getElementById('fileDesc').value.trim();
+    const cat = document.getElementById('fileCat').value;
+    const type = document.getElementById('fileType').value;
+    let url = document.getElementById('fileUrl').value.trim();
+    const fileInput = document.getElementById('fileUpload');
+    
+    if (!title || !desc) {
+      alert('الرجاء إدخال عنوان ووصف للملف');
+      return;
+    }
+    
+    const processAdd = (finalUrl, finalType, finalFileName) => {
+      if (!finalUrl) {
+        alert('الرجاء إدخال رابط صحيح أو رفع ملف');
+        return;
+      }
+      const newId = Date.now();
+      filesDatabase.unshift({
+        id: newId,
+        title: title,
+        desc: desc,
+        cat: cat,
+        type: finalType,
+        url: finalUrl,
+        fileName: finalFileName
+      });
+      saveToLocal();
+      renderLibrary();
+      document.getElementById('addPanel').style.display = 'none';
+      document.getElementById('fileTitle').value = '';
+      document.getElementById('fileDesc').value = '';
+      document.getElementById('fileUrl').value = '';
+      document.getElementById('fileUpload').value = '';
+      alert('تم إضافة الملف بنجاح!');
+    };
+    
+    if (fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      const fileExt = file.name.split('.').pop().toLowerCase();
+      let detectedType = 'pdf';
+      if (fileExt === 'ppt' || fileExt === 'pptx') detectedType = 'ppt';
+      else if (fileExt === 'doc' || fileExt === 'docx') detectedType = 'word';
+      else if (fileExt === 'dwg' || fileExt === 'dxf') detectedType = 'autocad';
+      else if (fileExt === 'pdf') detectedType = 'pdf';
+      else {
+        alert('نوع الملف غير مدعوم. الامتدادات المسموحة: PDF, PPT, PPTX, DOC, DOCX, DWG, DXF');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64 = e.target.result;
+        processAdd(base64, detectedType, file.name);
+      };
+      reader.readAsDataURL(file);
+    } else if (url) {
+      let detectedType = type;
+      const urlLower = url.toLowerCase();
+      if (urlLower.includes('.pdf')) detectedType = 'pdf';
+      else if (urlLower.includes('.ppt') || urlLower.includes('pptx')) detectedType = 'ppt';
+      else if (urlLower.includes('.doc') || urlLower.includes('docx')) detectedType = 'word';
+      else if (urlLower.includes('.dwg') || urlLower.includes('.dxf')) detectedType = 'autocad';
+      const fileName = url.split('/').pop() || 'document';
+      processAdd(url, detectedType, fileName);
+    } else {
+      alert('يجب إما إدخال رابط أو رفع ملف من جهازك');
+    }
+  }
+  
+  function previewFile(url, fileType, title) {
+    if (fileType === 'pdf') {
+      const modal = document.getElementById('pdfModal');
+      const iframe = document.getElementById('pdfIframe');
+      const modalTitle = document.getElementById('modalTitle');
+      modalTitle.innerText = title;
+      iframe.src = url;
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    } else if (fileType === 'autocad') {
+      // معاينة ملفات الأوتوكاد: نفتح الرابط في نافذة جديدة لأن المتصفح لا يدعم العرض المباشر
+      window.open(url, '_blank');
+      alert('سيتم فتح ملف AutoCAD في نافذة جديدة. إذا لم يعمل، يرجى تحميل الملف وفتحه عبر برنامج AutoCAD.');
+    } else {
+      // للملفات الأخرى (PPT, Word) نستخدم Google Docs Viewer
+      const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+      window.open(viewerUrl, '_blank');
+    }
+  }
+  
+  function closePDFModal() {
+    document.getElementById('pdfModal').style.display = 'none';
+    document.getElementById('pdfIframe').src = '';
+    document.body.style.overflow = 'auto';
+  }
+  function closeModalOnOutside(e) {
+    if (e.target.classList.contains('pdf-modal')) closePDFModal();
+  }
+  
+  function downloadFile(url, filename) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+  
+  function filterBy(cat) {
+    currentFilter = cat;
+    renderFilters();
+    renderLibrary();
+  }
+  
+  function toggleAddPanel() {
+    const panel = document.getElementById('addPanel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  }
+  
+  function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+  
+  // تحميل البيانات
+  loadFromLocal();
+  if (filesDatabase.length === 0) {
+    filesDatabase = [
+      { id: 1, title: "دليل الكود المصري للحريق 2023", desc: "النسخة المحدثة من الكود المصري لأنظمة الحماية من الحريق – الفصول الرئيسية والاشتراطات.", cat: "الكود المصري", type: "pdf", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", fileName: "dummy.pdf" },
+      { id: 2, title: "مقارنة بين أنظمة FM200 و NOVEC", desc: "تحليل تقني شامل لأنظمة الإطفاء الغازي ومزايا كل نظام.", cat: "مقارنة براندات", type: "ppt", url: "https://file-examples.com/storage/fe8c7eef0c6364f6c9504cc/2017/08/file_example_PPT_1MB.ppt", fileName: "comparison.ppt" },
+      { id: 3, title: "أساسيات تصميم شبكات الرشاشات", desc: "شرح خطوات تصميم شبكات sprinkler وفق NFPA 13 والكود المصري.", cat: "تصميم الأنظمة", type: "word", url: "https://file-examples.com/storage/fe8c7eef0c6364f6c9504cc/2017/02/file_example_DOC_100kB.doc", fileName: "sprinkler_guide.doc" },
+      { id: 4, title: "مخطط نموذج لغرفة مضخات الحريق - أوتوكاد", desc: "رسم أوتوكاد (DWG) يوضح توزيع مضخات الحريق ومواسير الطرد والحماية.", cat: "رسومات أوتوكاد", type: "autocad", url: "https://www.mediafire.com/file/4m6g6s6v6q6p6s6/sample.dwg/file", fileName: "fire_pump_room.dwg" }
+    ];
+    saveToLocal();
+  }
+  renderFilters();
+  renderLibrary();
+  
+  // تأثيرات سكرول
+  const revealElements = document.querySelectorAll('.scroll-reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealElements.forEach(el => observer.observe(el));
+  
+  // navbar scroll
+  window.addEventListener('scroll', function() {
+    const nav = document.getElementById('navbar');
+    if (window.scrollY > 50) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
+  
+  // mobile menu toggle
+  function toggleMobile() {
+    const menu = document.getElementById('mobileMenu');
+    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+  }
+  document.querySelectorAll('.mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.getElementById('mobileMenu').style.display = 'none';
+    });
+  });
+  
+  // إضافة التأخير المتتالي
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.file-card');
+    cards.forEach((card, i) => {
+      card.style.transitionDelay = `${0.05 * (i % 4)}s`;
+    });
+  }, 100);
+</script>
+</body>
+</html>
